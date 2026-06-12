@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
     const { data, error } = await resend.emails.send({
       from: 'onboarding@resend.dev',
-      to: 'your-actual-gmail-address@gmail.com', // 👈 Double check this is your verified Gmail address
+      to: 'hemantasaldekar@gmail.com', // 👈 Double check this is your verified Gmail address
       subject: `🚨 New Lead: Shell Software Solutions Simulator (${score}/100)`,
       html: `
         <div style="font-family: sans-serif; max-width: 600px; color: #0f172a;">
