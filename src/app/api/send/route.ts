@@ -8,31 +8,36 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { name, company, phone, email, branches, manualHours, teamSize, score } = body;
 
-    // Basic Validation
+    // Direct structural validation
     if (!name || !phone || !email) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Missing core representative credential records.' },
+        { status: 400 }
+      );
     }
 
-    // Send email using Resend
-    // NOTE: On the free tier without a custom domain, the 'from' email MUST be 'onboarding@resend.dev'
     const { data, error } = await resend.emails.send({
-      from: 'Tally Lead Gen <onboarding@resend.dev>',
-      to: 'hemantasaldekar@gmail.com', // 👈 Change to your Gmail address
-      subject: `🚨 New Hot Tally Lead: ${company || name}`,
+      from: 'onboarding@resend.dev',
+      to: 'your-actual-gmail-address@gmail.com', // 👈 Double check this is your verified Gmail address
+      subject: `🚨 New Lead: Shell Software Solutions Simulator (${score}/100)`,
       html: `
-        <h2>New Business Consultation Request</h2>
-        <p><strong>Contact Name:</strong> ${name}</p>
-        <p><strong>Company Name:</strong> ${company || 'Not Specified'}</p>
-        <p><strong>Phone Number:</strong> ${phone}</p>
-        <p><strong>Email Address:</strong> ${email}</p>
-        <hr />
-        <h3>Calculated Calculator Diagnostics:</h3>
-        <ul>
-          <li><strong>Operational Score:</strong> ${score}/100</li>
-          <li><strong>Number of Branches:</strong> ${branches}</li>
-          <li><strong>Manual Data Hours/Day:</strong> ${manualHours} hours</li>
-          <li><strong>Accounts Staff Size:</strong> ${teamSize} employees</li>
-        </ul>
+        <div style="font-family: sans-serif; max-width: 600px; color: #0f172a;">
+          <h2 style="color: #1e3a8a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">
+            Target Lead Profile Captured
+          </h2>
+          <p><strong>Representative Name:</strong> ${name}</p>
+          <p><strong>Company Legal Name:</strong> ${company || 'Not Disclosed'}</p>
+          <p><strong>WhatsApp/Direct Phone:</strong> ${phone}</p>
+          <p><strong>Official Email Address:</strong> ${email}</p>
+          
+          <h3 style="color: #0f172a; margin-top: 20px;">Diagnostic Metrics:</h3>
+          <ul style="background: #f8fafc; padding: 15px; list-style: none; border-radius: 8px;">
+            <li>🏢 <strong>Deployment Branches:</strong> ${branches}</li>
+            <li>⏱️ <strong>Manual voucher Entry Hours/Day:</strong> ${manualHours} Hours</li>
+            <li>👥 <strong>Active Endpoint Personnel:</strong> ${teamSize} Staff Nodes</li>
+            <li>📊 <strong style="color: #2563eb;">Workflow Integrity Score:</strong> <strong>${score}/100</strong></li>
+          </ul>
+        </div>
       `,
     });
 
@@ -41,7 +46,9 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ success: true, data }, { status: 200 });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  } catch (err) {
+    // Fixed: Standard Unknown typed error tracking to appease the Vercel strict linter
+    const errorMessage = err instanceof Error ? err.message : 'Unknown technical transmission fault';
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
